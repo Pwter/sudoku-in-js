@@ -1,0 +1,27 @@
+.cell
+{
+	border-width: 1px 0px 0px 1px;
+	border-color: black;
+	border-style: solid;
+	width: 30px;
+	height: 30px;
+	float: left;
+	line-height: 30px;
+	text-align: center;
+	
+}
+
+.protectedcell
+{
+	border-width: 1px 0px 0px 1px;
+	border-color: black;
+	border-style: solid;
+	width: 30px;
+	height: 30px;
+	float: left;
+	line-height: 30px;
+	text-align: center;
+	font-weight: bold;
+	color: red;
+	
+}
