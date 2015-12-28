@@ -1,3 +1,16 @@
+button
+{
+	width: 80px;
+	margin-bottom: 30px;
+
+}
+
+input
+{
+	width: 250px;
+	
+}
+
 .cell
 {
 	border-width: 1px 0px 0px 1px;
@@ -24,4 +37,18 @@
 	font-weight: bold;
 	color: red;
 	
+}
+
+.buttons
+{
+	clear: left;
+	font-weight: bold;
+}
+
+.options
+{
+	margin-left: 30px;
+	display: inline-block;
+	
+
 }

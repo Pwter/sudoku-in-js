@@ -2,17 +2,45 @@ var game=new Game();
 var activecellid="00";
 
 
+var board0 =
+	[	0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0
+	
+	];
+var board1 = 
+	[	-9,0,0,0,-3,0,0,0,0,
+0,-5,-7,-2,0,-1,0,-6,-9,
+-8,0,0,0,0,0,-1,0,0,
+0,0,0,-3,0,-2,-6,-1,0,
+0,0,-9,-1,0,-4,0,-2,-8,
+-1,-2,-3,0,0,0,0,-9,0,
+0,-7,0,-6,0,-3,0,-8,-4,
+-4,-3,-1,0,0,-9,0,0,0,
+0,0,0,0,-5,-7,0,-3,-1		
+	];
+	var board2 =[0,0,-2,-7,0,-5,0,-8,0,0,0,0,-9,-8,0,-5,0,0,0,-8,0,0,0,-1,0,-6,0,0,0,-6,0,-5,-8,0,0,-7,0,-9,-5,0,0,0,0,-4,-8,-8,0,0,0,-9,-4,-6,-5,0,0,0,-8,0,-6,-2,0,-9,-5,-9,-6,0,0,0,-7,0,-2,0,0,0,-3,-8,0,0,0,0,0];
+	var board3 =[-5,-3,-1,-6,-7,-8,0,0,0,-4,0,0,0,0,0,-5,0,0,-9,-7,0,0,-4,0,0,0,-1,0,0,0,0,-8,-2,0,0,0,0,0,0,-9,-6,-7,-4,-8,-3,0,0,-8,-5,0,0,-9,0,0,-2,0,0,-7,0,0,0,-5,0,-6,0,0,0,-3,0,-7,0,0,-8,0,-7,0,0,-6,-3,0,-4];
+	var board4 =[-5,-7,-1,0,0,0,0,0,0,0,0,0,0,0,-2,0,-5,0,0,0,0,0,-6,0,0,-8,-1,0,0,0,-8,0,0,0,-7,0,0,-5,-2,0,-3,0,0,0,0,0,-8,0,0,-2,-5,-4,-6,-3,0,-6,-7,0,-5,0,0,-4,-8,-9,-3,-5,-6,-8,-4,-1,0,0,-4,0,-8,-2,-7,0,0,0,-5];
+	
 
 document.onkeydown = checkKey;
 function checkKey(e) {
     e = e || window.event;
 
-    if (e.keyCode > '47' && e.keyCode < '58') {
+    if (e.keyCode > '47' && e.keyCode < '58')
 		game.modifyCell(activecellid,e.keyCode-48);
-		game.checkSolution();
-		game.update();
+	if (e.keyCode > '95' && e.keyCode < '106')
+		game.modifyCell(activecellid,e.keyCode-96);
+	game.checkSolution();
+	game.update();
 		
-    }
 
 }
 
@@ -42,11 +70,61 @@ function clicked(id)
 
 }
 
+function pushed(value)
+{
+	game.modifyCell(activecellid,value);
+	game.checkSolution();
+	game.update();
+	
+}
+
 function printOut(str)
 {
 	var wrapperinnerhtml=document.getElementById("wrapper").innerHTML;
 	document.getElementById("wrapper").innerHTML=wrapperinnerhtml+str;
 
+}
+
+function saveSudokuCode()
+{
+	var sudokucode=game.table;
+	document.getElementById("sudokucode").value=sudokucode;
+
+}
+
+function loadSudokuCode(presetboard)
+{
+	var sudokucodearray=[];
+	
+	if (typeof(presetboard)==='undefined') 
+	{
+		var sudokucode=document.getElementById("sudokucode").value;
+		var sudokucodearray = sudokucode.split(",");
+	}
+	else 
+		{switch(presetboard)
+		{
+			case 1: sudokucodearray=board1;
+				break;
+			case 2: sudokucodearray=board2;
+				break;
+			case 3: sudokucodearray=board3;
+				break;
+			case 4: sudokucodearray=board4;
+				break;
+			default: sudokucodearray=board0;
+				
+		};
+	}
+		
+	
+	if (sudokucodearray.length==81)
+	{
+		game.fillTable(sudokucodearray);
+		game.draw();
+
+		game.update();
+	}
 }
 
 function Game()
@@ -55,6 +133,7 @@ function Game()
 	
 	this.fillTable=function(board)
 	{
+		this.table=[];
 		var k=0;
 		for (var i=0; i<9; i++)
 		{
@@ -116,10 +195,16 @@ function Game()
 	
 	this.draw=function()
 	{
+		var node = document.getElementById('wrapper');
+		while (node.hasChildNodes()) {
+			node.removeChild(node.firstChild);
+		}
+		
 		for (var i=0; i<this.table.length;i++)
 		{
 			for (var j=0; j<this.table[i].length;j++)
 			{
+				
 				var cellid=""+i+j;
 				if (this.table[i][j]<0) 
 					cellclass="protectedcell";
@@ -145,6 +230,21 @@ function Game()
 
 	}
 	
+	this.createbuttons=function()
+	{
+		document.getElementById("buttons").innerHTML="";
+		var cellid="buttons";
+		for (var i=0; i<10; i++)
+		{
+			document.getElementById("buttons").innerHTML+="<div id="+cellid+i+" class='cell' onclick='pushed("+i+")'>"+i+"</div>";
+			var cellStyle=document.getElementById(""+cellid+i).style;
+			cellStyle.marginTop="30px";
+			cellStyle.borderBottomWidth="1px";
+			if (i==9)
+				cellStyle.borderRightWidth="1px";
+		}
+	}
+	
 	this.update=function()
 	{
 		for (var i=0; i<this.table.length;i++)
@@ -164,51 +264,9 @@ function Game()
 
 
 function game_init() {
-	var board1 = 
-		[	1,2,3,1,2,3,1,2,3,
-			4,5,6,4,5,6,4,5,6,
-			7,8,9,7,8,9,7,8,9,
-			1,2,3,-1,-2,-3,1,2,3,
-			4,5,6,-4,-5,-6,4,5,6,
-			7,8,9,-7,-8,-9,7,8,9,
-			1,2,3,1,2,3,1,2,3,
-			4,5,6,4,5,6,4,5,6,
-			7,8,9,7,8,9,7,8,9
-			
-		];
-	var board2 =
-		[	0,0,0,0,0,0,0,0,0,
-			0,0,0,0,0,0,0,0,0,
-			0,0,0,0,0,0,0,0,0,
-			0,0,0,0,0,0,0,0,0,
-			0,0,0,0,0,0,0,0,0,
-			0,0,0,0,0,0,0,0,0,
-			0,0,0,0,0,0,0,0,0,
-			0,0,0,0,0,0,0,0,0,
-			0,0,0,0,0,0,0,0,0
-		
-		];
-	var board3 = 
-	[0,0,-2,-6,-7,0,-9,-5,0,
-0,0,-6,-5,-1,-9,0,0,0,
-0,-9,0,0,0,-8,-1,0,0,
-0,0,0,0,-3,-1,0,-8,0,
-0,-6,0,0,0,-7,0,0,0,
-0,-2,-3,0,0,-6,-5,0,0,
-0,0,0,-1,-6,-4,0,-2,0,
--2,0,0,-7,0,0,-6,0,-9,
-0,0,-5,0,0,-2,0,0,-8];
-	var board4 =
-	[-9,0,0,0,-3,0,0,0,0,
-0,-5,-7,-2,0,-1,0,-6,-9,
--8,0,0,0,0,0,-1,0,0,
-0,0,0,-3,0,-2,-6,-1,0,
-0,0,-9,-1,0,-4,0,-2,-8,
--1,-2,-3,0,0,0,0,-9,0,
-0,-7,0,-6,0,-3,0,-8,-4,
--4,-3,-1,0,0,-9,0,0,0,
-0,0,0,0,-5,-7,0,-3,-1];
-	game.fillTable(board4);
+
+	game.fillTable(board0);
+	game.createbuttons();
 	game.draw();
 	game.update();
 
